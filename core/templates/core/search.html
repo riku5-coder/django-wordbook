@@ -1,0 +1,116 @@
+{% extends "core/base.html" %}
+
+{% block title %} 英和辞典検索 {% endblock %}
+
+
+{% block content %}
+
+<h1 class="title">英和辞典検索</h1>
+
+<form method="get">
+  <div class="field has-addons">
+    <div class="control is-expanded">
+      <input
+        class="input"
+        type="text"
+        name="q"
+        placeholder="英単語を入力"
+        value="{{ query|default:'' }}"
+      >
+    </div>
+    <div class="control">
+      <button class="button is-link">検索</button>
+    </div>
+  </div>
+</form>
+
+{% if error %}
+  <p class="notification is-danger">{{ error }}</p>
+{% endif %}
+
+{% if meanings %}
+  <h2 class="subtitle">検索結果（一番上が主な意味。すべての意味を登録したり、編集した意味を登録したりできる）</h2>
+
+  <ul>
+    {% for meaning in meanings %}
+      <li class="box">
+        <strong>{{ query }}</strong>：{{ meaning }}
+
+        {% if user.is_authenticated %}
+          <form
+            method="post"
+            action="{% url 'register_word' %}"
+            style="margin-top: 0.5em;"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="word" value="{{ query }}">
+            <input type="hidden" name="meaning" value="{{ meaning }}">
+            <button class="button is-small is-success">
+              この意味を登録
+            </button>
+          </form>
+        {% else %}
+          <p class="has-text-grey is-size-7">
+            ※ 登録するにはログインが必要です
+          </p>
+        {% endif %}
+      </li>
+    {% endfor %}
+
+    <!--意味全てを表示し、登録する-->    
+    <li class="box">
+        <strong>{{ query }}</strong>:
+        {% for meaning in meanings %}
+        <mark> {{ forloop.counter }}. </mark>{{ meaning }}
+        {% if not forloop.last %}&ensp;{% endif %}
+        {% endfor %}
+        {% if user.is_authenticated %}
+        <form
+        method="post"
+        action="{% url 'register_word' %}"
+        style="margin-top: 0.5em;"
+        >
+        {% csrf_token %}
+        <input type="hidden" name="word" value="{{ query }}">
+        {% for meaning in meanings %}
+        <input type="hidden" name="meaning" value="{{ meaning }}">
+        {% endfor %}
+        <button class="button is-small is-success">すべての意味を登録</button>
+        </form>
+        {% else %}
+        <p class="has-text-grey is-size-7">
+        ※ 登録するにはログインが必要です
+        </p>
+        {% endif %}
+    </li>
+    <!-- 全ての意味を編集して登録する　-->
+    {% if user.is_authenticated %}
+    <li class="box">
+        <form method="post" action="{% url 'register_word' %}">
+        {% csrf_token %}
+
+            <input type="hidden" name="word" value="{{ query }}">
+
+            <div class="field">
+                <label class="label">{{ query }}の意味を自由に編集して登録する</label>
+                <div class="control">
+                    <textarea
+                    class="textarea"
+                    name="meaning"
+                    rows="10"
+                    >{% for m in meanings %}{{ m }}{% if not forloop.last %}
+{% endif %}{% endfor %}</textarea>
+                </div>
+            </div>
+   
+            <button class="button is-small is-success">
+            編集した内容で登録
+            </button>
+            </form>
+
+    </li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+{% endblock %}

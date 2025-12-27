@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+{% block title %} ログイン画面 {% endblock %}
+{% block content %}
+
+<h1 class="title">ログイン</h1>
+
+<div class="box" style="max-width: 500px;">
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="field">
+      <label class="label">ユーザー名</label>
+      <div class="control">
+        <input class="input" type="text" name="username" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">パスワード</label>
+      <div class="control">
+        <input class="input" type="password" name="password" required>
+      </div>
+    </div>
+
+    {% if form.errors %}
+      <p class="has-text-danger">
+        ユーザー名またはパスワードが違います。
+      </p>
+    {% endif %}
+
+    <div class="field">
+      <div class="control">
+        <button class="button is-link">ログイン</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

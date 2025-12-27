@@ -1,0 +1,86 @@
+{% extends "core/base.html" %}
+
+{% block title %}トップ | 単語帳アプリ{% endblock %}
+
+{% block content %}
+
+<div class="columns is-centered">
+  <div class="column is-8">
+
+    <!-- ヒーロー的説明 -->
+    <div class="box mb-5">
+      <h1 class="title is-3">英単語帳アプリへようこそ</h1>
+      <p class="mb-3">
+        このアプリは、語学学習のためのシンプルな単語帳アプリです。
+      </p>
+
+      <ul>
+        <li>📖 単語の意味を調べる（ログイン不要）</li>
+        <li>🗂 単語とその意味を保存・管理する（ログイン必要）</li>
+      </ul>
+    </div>
+    <!-- 単語検索（誰でも使える） -->
+    <div class="box mb-5">
+      <h2 class="title is-4">単語の意味を調べる</h2>
+      <p class="mb-3">
+        単語の意味をすぐに調べることができます。また、今までに全てのユーザーに登録された単語を見ることができます。
+        <strong>ログインしなくても利用可能</strong>です。
+      </p>
+
+      <a class="button is-primary"
+         href="{% url 'word_search' %}">
+        単語を調べる
+      </a>
+      <a class="button is-primary"
+         href="{% url 'word_list' %}">
+        単語リストを見る
+      </a>
+    </div>
+
+     ログイン必須機能 
+    <div class="box">
+      <h2 class="title is-4">単語帳機能</h2>
+
+      {% if user.is_authenticated %}
+        <p class="mb-3">
+          ログイン中です。単語帳機能を利用できます。
+        </p>
+
+        <div class="buttons">
+          <a class="button is-primary"
+             href="{% url 'word_list' %}">
+            単語一覧
+          </a>
+          <a class="button is-primary"
+             href="">
+            単語を手動で追加
+          </a>
+        </div>
+
+      {% else %}
+        <p class="mb-3">
+          単語を保存・管理するにはログインが必要です。
+        </p>
+
+        <div class="notification is-warning is-light">
+          単語追加および自分だけの単語帳機能は、
+          <strong>ログインユーザー限定</strong>です。
+        </div>
+
+        <div class="buttons">
+          <a class="button is-light"
+             href="{% url 'login' %}">
+            ログイン
+          </a>
+          <a class="button is-warning"
+             href="{% url 'signup' %}">
+            サインアップ
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+

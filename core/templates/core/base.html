@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}英単語帳アプリ{% endblock %}</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+  >
+
+  <style>
+    /* アプリ全体の安全マージン */
+    .app-wrapper {
+      padding: 16px;          /* 常に画面端から余白 */
+      min-height: 100vh;
+      background-color: #f5f5f5; /* ページ全体の背景 */
+    }
+
+    /* 中の白背景（カード的役割） */
+    .app-container {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden; /* navbarの角丸対策 */
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <div class="app-container">
+
+    <!-- Navbar -->
+    <nav class="navbar is-primary" role="navigation">
+      <div class="container px-4">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="{% url 'top' %}">
+            <strong>英単語帳</strong>
+          </a>
+
+          <a role="button" class="navbar-burger"
+             data-target="navbarMenu">
+            <span></span><span></span><span></span>
+          </a>
+        </div>
+
+        <div id="navbarMenu" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item" href="{% url 'word_search' %}">単語検索と単語の追加</a>
+            <a class="navbar-item" href="{% url 'word_list' %}">単語一覧</a>
+            <a class="navbar-item" href="">単語を手動で追加</a>
+          </div>
+
+          <div class="navbar-end">
+            <div class="navbar-item">
+              {% if user.is_authenticated %}
+                <span class="mr-3">{{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}" style="display:inline">
+                {% csrf_token %}
+                <button class="navbar-item button is-light" type="submit">ログアウト</button>
+                </form>
+              {% else %}
+                <div class="buttons">
+                  <a class="button is-light" href="{% url 'login' %}?next={{ request.path }}">ログイン</a>
+                  <a class="button is-warning" href="{% url 'signup' %}">サインアップ</a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main -->
+    <section class="section">
+      <div class="container px-4">
+        {% block content %}{% endblock %}
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container px-4 has-text-centered">
+        <p><strong>英単語帳アプリ</strong>by Django & Bulma</p>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.navbar-burger').forEach(burger => {
+      burger.addEventListener('click', () => {
+        const target = document.getElementById(burger.dataset.target);
+        burger.classList.toggle('is-active');
+        target.classList.toggle('is-active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% block title %} ユーザー登録画面 {% endblock %}
+{% block content %}
+
+<h1 class="title">サインアップ</h1>
+
+<div class="box" style="max-width: 500px;">
+
+    <div class="content">
+    <p><strong>ユーザー名について</strong></p>
+    <ul>
+      <li>英数字と記号（@ . + - _）が使えます</li>
+      <li>他のユーザーと同じ名前は使えません</li>
+    </ul>
+
+    <p><strong>パスワードについて</strong></p>
+    <ul>
+      <li>8文字以上で入力してください</li>
+      <li>確認のため2回入力します</li>
+    </ul>
+  </div>
+
+  <hr>
+  <form method="post">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="field">
+        <label class="label">{{ field.label }}</label>
+        <div class="control">
+          {{ field }}
+        </div>
+
+        {% if field.errors %}
+          <p class="has-text-danger">
+            {{ field.errors|striptags }}
+          </p>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="field">
+      <div class="control">
+        <button class="button is-link">
+          登録する
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
