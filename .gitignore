@@ -12,3 +12,15 @@ staticfiles/
 
 # VS Code
 .vscode/
+
+# Windows
+Thumbs.db
+
+# pyenvの設定ファイル
+pyvenv.cfg
+
+# バイナリーファイルが生成されるフォルダー
+bin/
+
+# ライブラリーを収録するフォルダー
+lib/
