@@ -47,21 +47,21 @@ def word_search(request):
 @login_required
 def register_word(request):
     if request.method == "POST":
-        word = request.POST.get("word")
+        word = request.POST.get("word", "").strip()
         meaning_list = request.POST.getlist("meaning")
-        
+
+        # 空文字を除去
+        meaning_list = [m.strip() for m in meaning_list if m.strip()]
+
         if not meaning_list:
             return HttpResponseBadRequest("meaning is required")
 
         if len(meaning_list) == 1:
             meaning = meaning_list[0]
-        
-        elif len(meaning_list) >= 2:
-            for i in range(len(meaning_list)):
-                meaning_list[i] = str(i + 1) + '. ' + meaning_list[i]
-            # 半角スペース２つでつないで文字列にする
-            meaning = '  '.join(meaning_list)
-
+        else:
+            meaning = "  ".join(
+                f"{i + 1}. {m}" for i, m in enumerate(meaning_list)
+            )
 
         UserWord.objects.create(
             user=request.user,
@@ -70,8 +70,7 @@ def register_word(request):
             source="excelapi"
         )
 
-    return redirect("word_search")
-
+        return redirect("word_search")
 
 
 
