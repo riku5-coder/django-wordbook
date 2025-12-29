@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+{% block title %} 手動で単語登録 {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 600px;">
+    <h1 class="title is-4">単語を登録</h1>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="field">
+        <label class="label">単語</label>
+        <div class="control">
+          {{ form.word }}
+        </div>
+        {% if form.word.errors %}
+          <p class="help is-danger">{{ form.word.errors }}</p>
+        {% endif %}
+      </div>
+
+      <div class="field">
+        <label class="label">意味</label>
+        <div class="control">
+          {{ form.meaning }}
+        </div>
+        {% if form.meaning.errors %}
+          <p class="help is-danger">{{ form.meaning.errors }}</p>
+        {% endif %}
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary" type="submit">
+            登録
+          </button>
+        </div>
+        <div class="control">
+          <a class="button is-light" href="{% url 'word_list' %}">
+            キャンセル
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

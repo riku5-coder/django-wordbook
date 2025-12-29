@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .utils import lookup_enja
 from .models import UserWord
+from .forms import WordCreateForm
 from django.utils import timezone
 from datetime import timedelta
 # Create your views here.
@@ -42,7 +43,7 @@ def word_search(request):
         }
     )
 
-
+# apiで検索した単語を登録する
 @login_required
 def register_word(request):
     if request.method == "POST":
@@ -150,4 +151,22 @@ def word_delete(request, pk):
         return redirect("word_list")
 
     return redirect("word_edit", pk=pk)
+
+
+@login_required
+def word_create(request):
+    if request.method == "POST":
+        form = WordCreateForm(request.POST)
+        if form.is_valid():
+            word = form.save(commit=False)
+            word.user = request.user
+            word.source = 'manual'
+            word.save()
+            return redirect("word_list")
+    else:
+        form = WordCreateForm()
+
+    return render(request, "core/word_create.html", {
+        "form": form
+    })
 
