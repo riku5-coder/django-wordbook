@@ -59,6 +59,7 @@ def register_word(request):
         if len(meaning_list) == 1:
             meaning = meaning_list[0]
         else:
+            # 自動で全部の意味を登録した場合、1. 意味 2. 意味　3. 意味…　のような形で登録
             meaning = "  ".join(
                 f"{i + 1}. {m}" for i, m in enumerate(meaning_list)
             )
@@ -122,7 +123,7 @@ def signup(request):
 def word_edit(request, pk):
     word = get_object_or_404(UserWord, pk=pk)
 
-    # 本人チェック（超重要）
+    # 本人チェック
     if word.user != request.user:
         raise PermissionDenied
 
@@ -169,3 +170,34 @@ def word_create(request):
         "form": form
     })
 
+
+
+@login_required
+def flashcards(request):
+    period = request.GET.get("period", "today")
+
+    now = timezone.now()
+
+    qs = UserWord.objects.filter(user=request.user)
+
+    if period == "today":
+        start = now.date()
+        qs = qs.filter(created_at__date=start)
+
+    elif period == "week":
+        start = now - timedelta(days=7)
+        qs = qs.filter(created_at__gte=start)
+
+    elif period == "month":
+        start = now - timedelta(days=30)
+        qs = qs.filter(created_at__gte=start)
+
+    elif period == "all":
+        pass  # 絞り込みなし
+
+    qs = qs.order_by("-created_at")[:50]
+
+    return render(request, "core/flashcards.html", {
+        "words": qs,
+        "period": period,
+    })

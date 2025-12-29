@@ -1,0 +1,63 @@
+{% extends "core/base.html" %}
+
+{% block title %} フラッシュカード {% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 800px;">
+
+    <h1 class="title is-4">フラッシュカード</h1>
+
+    <!-- フィルター -->
+    <div class="buttons mb-4">
+      <a class="button {% if period == 'today' %}is-link{% endif %}"
+         href="?period=today">今日</a>
+      <a class="button {% if period == 'week' %}is-link{% endif %}"
+         href="?period=week">直近1週間</a>
+      <a class="button {% if period == 'month' %}is-link{% endif %}"
+         href="?period=month">直近1か月</a>
+      <a class="button {% if period == 'all' %}is-link{% endif %}"
+         href="?period=all">すべて</a>
+    </div>
+
+    {% if words %}
+      <div class="columns is-multiline">
+
+        {% for w in words %}
+        <div class="column is-half">
+          <div class="card flashcard" onclick="toggleMeaning(this)">
+            <div class="card-content">
+
+              <!-- 表：単語 -->
+              <p class="title is-5">
+                {{ w.word }}
+              </p>
+
+              <!-- 裏：意味（最初は非表示） -->
+              <div class="content meaning is-hidden"
+                   style="white-space: pre-line;">
+                {{ w.meaning }}
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+    {% else %}
+      <div class="notification is-light">
+        対象となる単語がありません。
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<script>
+function toggleMeaning(card) {
+  const meaning = card.querySelector(".meaning");
+  meaning.classList.toggle("is-hidden");
+}
+</script>
+{% endblock %}
