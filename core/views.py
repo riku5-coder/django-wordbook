@@ -14,8 +14,8 @@ from datetime import timedelta
 def top(request):
     """
     トップページ
-    ・誰でもアクセス可能
-    ・機能説明と導線を表示
+    誰でもアクセス可能
+    機能説明と導線を表示
     """
     return render(request, "core/top.html")
 
@@ -28,7 +28,7 @@ def word_search(request):
 
     if query:
         try:
-            # loolup_enjaは文字列のリストを返す。インデックス0が主要な意味。
+            # loolup_enja(utils.pyにある)は文字列のリストを返す。インデックス0が主要な意味。
             meanings = lookup_enja(query)
         except Exception:
             error = "辞書の検索に失敗しました"
@@ -43,7 +43,7 @@ def word_search(request):
         }
     )
 
-# apiで検索した単語を登録する
+# apiで検索した単語を登録する。フォームを使うとかえって煩雑になるのでフォームは使わない
 @login_required
 def register_word(request):
     if request.method == "POST":
@@ -74,11 +74,13 @@ def register_word(request):
         return redirect("word_search")
 
 
-
+# 登録した単語のリストを表示する。
+# ログインしていればそのユーザーのリスト、そうでなければ登録されたすべての単語リスト。
+# 
 def word_list(request):
     period = request.GET.get("period")
     now = timezone.now()
-        # --- ① ベースとなる QuerySet を決める ---
+        # ベースとなる QuerySet を決める
     if request.user.is_authenticated:
         # ログイン中：自分の単語のみ
         qs = UserWord.objects.filter(user=request.user)
