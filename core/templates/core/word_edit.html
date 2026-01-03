@@ -3,7 +3,7 @@
 {% block content %}
 
 <h1 class="title">単語を編集</h1>
-
+<!--編集にはWordCreateFormを流用-->
 <div class="box" style="max-width: 600px;">
   <form method="post">
     {% csrf_token %}
@@ -11,16 +11,21 @@
     <div class="field">
       <label class="label">単語</label>
       <div class="control">
-        <input class="input" type="text" name="word"
-               value="{{ word_obj.word }}" required>
+        {{ form.word}}
       </div>
+      {% if form.word.errors %}
+      <p class="help is-danger">{{ form.word.errors }}</p>
+      {% endif %}
     </div>
 
     <div class="field">
       <label class="label">意味</label>
       <div class="control">
-        <textarea class="textarea" name="meaning" rows="5">{{ word_obj.meaning }}</textarea>
+        {{ form.meaning }}
       </div>
+      {% if form.meaning.errors %}
+      <p class="help is-danger">{{ form.word.errors }}</p>
+      {% endif %}
     </div>
 
     <div class="field is-grouped">

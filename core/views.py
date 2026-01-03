@@ -14,8 +14,8 @@ from datetime import timedelta
 def top(request):
     """
     トップページ
-    ・誰でもアクセス可能
-    ・機能説明と導線を表示
+    誰でもアクセス可能
+    機能説明と導線を表示
     """
     return render(request, "core/top.html")
 
@@ -28,7 +28,7 @@ def word_search(request):
 
     if query:
         try:
-            # loolup_enjaは文字列のリストを返す。インデックス0が主要な意味。
+            # loolup_enja(utils.pyにある)は文字列のリストを返す。インデックス0が主要な意味。
             meanings = lookup_enja(query)
         except Exception:
             error = "辞書の検索に失敗しました"
@@ -43,7 +43,7 @@ def word_search(request):
         }
     )
 
-# apiで検索した単語を登録する
+# apiで検索した単語を登録する。フォームを使うとかえって煩雑になるのでフォームは使わない
 @login_required
 def register_word(request):
     if request.method == "POST":
@@ -74,11 +74,13 @@ def register_word(request):
         return redirect("word_search")
 
 
-
+# 登録した単語のリストを表示する。
+# ログインしていればそのユーザーのリスト、そうでなければ登録されたすべての単語リスト。
+# 
 def word_list(request):
     period = request.GET.get("period")
     now = timezone.now()
-        # --- ① ベースとなる QuerySet を決める ---
+        # ベースとなる QuerySet を決める
     if request.user.is_authenticated:
         # ログイン中：自分の単語のみ
         qs = UserWord.objects.filter(user=request.user)
@@ -126,17 +128,23 @@ def word_edit(request, pk):
     # 本人チェック
     if word.user != request.user:
         raise PermissionDenied
-
+    # フォームを使って編集された単語を登録する
     if request.method == "POST":
-        word.word = request.POST.get("word", "").strip()
-        word.meaning = request.POST.get("meaning", "").strip()
-        word.save()
-        return redirect("word_list")
+        form = WordCreateForm(request.POST, instance=word)
+        if form.is_valid():
+            form.save()
+            return redirect("word_list")
+    
+    else:
+        form = WordCreateForm(instance=word)
 
     return render(
         request,
         "core/word_edit.html",
-        {"word_obj": word}
+        {
+            "form": form,
+            "word_obj": word, #削除url用
+        }
     )
 
 @login_required
@@ -171,7 +179,7 @@ def word_create(request):
     })
 
 
-
+#フラッシュカードは今日、直近一週間、直近一か月でソートする
 @login_required
 def flashcards(request):
     period = request.GET.get("period", "today")
@@ -184,16 +192,17 @@ def flashcards(request):
         start = now.date()
         qs = qs.filter(created_at__date=start)
 
+    #一週間以内のものを取得
     elif period == "week":
         start = now - timedelta(days=7)
         qs = qs.filter(created_at__gte=start)
-
+    #一か月いないのものを取得
     elif period == "month":
         start = now - timedelta(days=30)
         qs = qs.filter(created_at__gte=start)
 
     elif period == "all":
-        pass  # 絞り込みなし
+        pass  # すべてなので絞り込みはなし
 
     qs = qs.order_by("-created_at")[:50]
 
