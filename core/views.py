@@ -171,7 +171,7 @@ def word_create(request):
     })
 
 
-
+#フラッシュカードは今日、直近一週間、直近一か月でソートする
 @login_required
 def flashcards(request):
     period = request.GET.get("period", "today")
@@ -184,16 +184,17 @@ def flashcards(request):
         start = now.date()
         qs = qs.filter(created_at__date=start)
 
+    #一週間以内のものを取得
     elif period == "week":
         start = now - timedelta(days=7)
         qs = qs.filter(created_at__gte=start)
-
+    #一か月いないのものを取得
     elif period == "month":
         start = now - timedelta(days=30)
         qs = qs.filter(created_at__gte=start)
 
     elif period == "all":
-        pass  # 絞り込みなし
+        pass  # すべてなので絞り込みはなし
 
     qs = qs.order_by("-created_at")[:50]
 
