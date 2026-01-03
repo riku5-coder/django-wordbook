@@ -126,17 +126,23 @@ def word_edit(request, pk):
     # 本人チェック
     if word.user != request.user:
         raise PermissionDenied
-
+    # フォームを使って編集された単語を登録する
     if request.method == "POST":
-        word.word = request.POST.get("word", "").strip()
-        word.meaning = request.POST.get("meaning", "").strip()
-        word.save()
-        return redirect("word_list")
+        form = WordCreateForm(request.POST, instance=word)
+        if form.is_valid():
+            form.save()
+            return redirect("word_list")
+    
+    else:
+        form = WordCreateForm(instance=word)
 
     return render(
         request,
         "core/word_edit.html",
-        {"word_obj": word}
+        {
+            "form": form,
+            "word_obj": word, #削除url用
+        }
     )
 
 @login_required
