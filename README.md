@@ -74,7 +74,7 @@ python manage.py runserver
 
 ---
 
-#　その他
+## その他
  - 設計・開発・実装すべて自分ひとりで行いました
  - デフォルトブランチはmainですが、Renderに上げているブランチはfeature/rendertestです
  - mainはローカルで動かすセッティングのままです
