@@ -64,7 +64,12 @@
                 </form>
               {% else %}
                 <div class="buttons">
-                  <a class="button is-light" href="{% url 'login' %}?next={{ request.path }}">ログイン</a>
+                  <!-- サインアップ画面からログインボタンを押してログインし、サインアップ画面に戻らないようにする　-->
+                    {% if request.resolver_match.url_name == 'signup' %}
+                      <a class="button is-light" href="{% url 'login' %}">ログイン</a>
+                    {% else %}
+                      <a class="button is-light" href="{% url 'login' %}?next={{ request.path }}">ログイン</a>
+                    {% endif %}
                   <a class="button is-warning" href="{% url 'signup' %}">サインアップ</a>
                 </div>
               {% endif %}
