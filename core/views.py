@@ -90,7 +90,7 @@ def word_list(request):
         qs = UserWord.objects.all()
         is_public = True
 
-
+    # ユーザーが押したボタン（今日、直近１週間、直近１か月）でソートし、ユーザーに見せる。
     if period == "today":
         qs = qs.filter(created_at__date=now.date())
     elif period == "week":
@@ -98,7 +98,7 @@ def word_list(request):
     elif period == "month":
         qs = qs.filter(created_at__gte=now - timedelta(days=30))
 
-
+    #　降順
     qs = qs.order_by("-created_at")
 
     return render(request, "core/word_list.html", {
@@ -204,6 +204,7 @@ def flashcards(request):
     elif period == "all":
         pass  # すべてなので絞り込みはなし
 
+    # 降順
     qs = qs.order_by("-created_at")[:50]
 
     return render(request, "core/flashcards.html", {
