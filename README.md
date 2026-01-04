@@ -1,4 +1,4 @@
-# プロジェクト名
+## プロジェクト名
 **Django-wordbook**
 
 英単語を検索・登録し、フラッシュカードで効率的に復習できるWebアプリです。
@@ -30,8 +30,8 @@
 ## 技術スタック
 
 ### バックエンド
-- Python
-- Django
+- Python3.12.9
+- Django6.0
 
 ### フロントエンド
 - HTML
@@ -65,8 +65,8 @@
 ## セットアップ（ローカル実行方法）
 
 ```bash
-git clone https://github.com/username/repository-name.git
-cd repository-name
+git clone https://github.com/riku5-coder/django-wordbook.git
+cd django-wordbook
 
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
